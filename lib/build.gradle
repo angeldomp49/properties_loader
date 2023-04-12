@@ -42,7 +42,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'org.makechtec.software'
             artifactId = 'properties_loader'
-            version = '1.0.0'
+            version = '1.0.1'
 
             from components.java
         }

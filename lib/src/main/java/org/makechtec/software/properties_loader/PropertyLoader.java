@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.extern.java.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -15,12 +17,15 @@ public class PropertyLoader {
     private final PropertyFileFinder finder;
     private final Properties propertiesList;
     private boolean isFileAlreadyLoaded;
+    @Getter
+    private final List<String> errorMessages;
 
     public PropertyLoader(String filename) {
         this.filename = filename;
         this.finder = new PropertyFileFinder();
         propertiesList = new Properties();
         isFileAlreadyLoaded = false;
+        errorMessages = new ArrayList<>();
     }
 
     public Optional<String> getProperty(String name){
@@ -29,6 +34,7 @@ public class PropertyLoader {
             loadFile();
 
             if(!isFileAlreadyLoaded){
+                showErrorMessages();
                 return Optional.empty();
             }
         }
@@ -36,10 +42,12 @@ public class PropertyLoader {
         var property = propertiesList.getProperty(name);
 
         if(property == null){
-            log.info("Property not found: " + name);
+            errorMessages.add("Property not found: " + name);
+            showErrorMessages();
             return Optional.empty();
         }
 
+        showErrorMessages();
         return Optional.of(property);
 
     }
@@ -50,18 +58,22 @@ public class PropertyLoader {
         try {
 
             if(resource.isEmpty()){
-                throw new IOException();
+                errorMessages.add("Not found resource file: " + filename);
+                isFileAlreadyLoaded = false;
+                return;
             }
 
             propertiesList.load(resource.get());
-            log.info("Loaded file: " + this.filename);
             isFileAlreadyLoaded = true;
 
         } catch (IOException e) {
-            log.warning("Failed to load file: " + this.filename);
+            errorMessages.add("Failed to load file: " + this.filename);
             isFileAlreadyLoaded = false;
         }
 
     }
 
+    private void showErrorMessages(){
+        errorMessages.forEach(log::severe);
+    }
 }
