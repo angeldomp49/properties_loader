@@ -18,7 +18,7 @@ public class PropertyLoader {
     private final Properties propertiesList;
     private boolean isFileAlreadyLoaded;
     @Getter
-    private final List<String> errorMessages;
+    private List<String> errorMessages;
 
     public PropertyLoader(String filename) {
         this.filename = filename;
@@ -29,6 +29,8 @@ public class PropertyLoader {
     }
 
     public Optional<String> getProperty(String name){
+
+        errorMessages = new ArrayList<>();
 
         if(!isFileAlreadyLoaded){
             loadFile();
