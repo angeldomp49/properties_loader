@@ -9,12 +9,12 @@ Maven
     <dependency>
         <groupId>org.makechtec.software</groupId>
         <artifactId>properties_loader</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
     </dependency>
 
 Gradle
 
-    implementation 'org.makechtec.software:properties_loader:1.0.1'
+    implementation 'org.makechtec.software:properties_loader:1.1.0'
 
 ## Usage ##
 
