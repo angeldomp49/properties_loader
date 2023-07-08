@@ -1,31 +1,41 @@
 package org.makechtec.software.properties_loader;
 
+import lombok.extern.java.Log;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.Optional;
 
+@Log
 class PropertyFileFinder {
 
-    public Optional<InputStream> resource(String filename) {
-        var stream = PropertyFileFinder.class.getClassLoader().getResourceAsStream(filename);
+    public void resource(String filename, InputStreamConsumer consumer) {
+        try(var stream = PropertyFileFinder.class.getClassLoader().getResourceAsStream(filename)){
 
-        return (stream != null) ? Optional.of(stream) : Optional.empty();
+            if(Objects.isNull(stream)){
+                log.warning("File not found: " + filename);
+                return;
+            }
+
+            consumer.consume(stream);
+        } catch (IOException e) {
+            log.warning("Failed to load resource file: " + filename);
+        }
     }
 
-    public Optional<InputStream> readFromAbsolutePath(String absolutePath){
+    public void readFromAbsolutePath(String absolutePath, InputStreamConsumer consumer){
 
-        try{
-            var stream = new FileInputStream(absolutePath);
-
-            return Optional.of(stream);
-        }
-        catch (FileNotFoundException e) {
-            return Optional.empty();
+        try(var stream = new FileInputStream(absolutePath)){
+            consumer.consume(stream);
+        } catch (FileNotFoundException e) {
+            log.warning("File not found: " + absolutePath);
+        } catch (IOException e) {
+            log.warning("Failed to load resource file: " + absolutePath);
         }
 
     }
-
-
 
 }

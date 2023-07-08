@@ -29,7 +29,30 @@ And the code
     assertTrue(loader.getProperty("name").isPresent());
     assertEquals("jhon", loader.getProperty("name").get());
 
+---
+
+#### AbsolutePathPropertyLoader ####
+
+Consider a file in the user dir called __forTest.properties__
+
+    foo=bar
+    jhon=lennon
+
+And the code
+
+    var path = new PathGenerator();
+    var userDir = path.userDir();
+    var loader = new AbsolutePathPropertyLoader(userDir + "/forTest.properties");
+
+    var foo = loader.getProperty("foo");
+    var jhon = loader.getProperty("jhon");
+
+
+    assertTrue(foo.isPresent());
+    assertEquals("bar", foo.get());
+    assertEquals("lennon", jhon.get());
+
 
 ## Releases history ##
-
-- [v1.0.1](/docs/v1.0.1.md)
+- v1.1.0 Added absolute path file load capacity
+- v1.0.1 the first release

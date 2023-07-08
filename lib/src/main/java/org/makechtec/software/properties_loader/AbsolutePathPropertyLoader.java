@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.Properties;
 
 @Log
-public class PropertyLoader {
+public class AbsolutePathPropertyLoader {
 
     @Getter
     private final String filename;
@@ -20,7 +20,7 @@ public class PropertyLoader {
     @Getter
     private List<String> errorMessages;
 
-    public PropertyLoader(String filename) {
+    public AbsolutePathPropertyLoader(String filename) {
         this.filename = filename;
         this.finder = new PropertyFileFinder();
         propertiesList = new Properties();
@@ -55,23 +55,22 @@ public class PropertyLoader {
     }
 
     private void loadFile(){
-
-        finder.resource(filename, resource -> {
-
+        finder.readFromAbsolutePath(filename, stream -> {
             try {
-                propertiesList.load(resource);
+
+                propertiesList.load(stream);
                 isFileAlreadyLoaded = true;
+
             } catch (IOException e) {
-                errorMessages.add("Failed to load resource: " + filename + "\n" + e.getMessage());
+                errorMessages.add("Failed to load file: " + this.filename);
                 isFileAlreadyLoaded = false;
             }
-
         });
-
 
     }
 
     private void showErrorMessages(){
         errorMessages.forEach(log::severe);
     }
+
 }
